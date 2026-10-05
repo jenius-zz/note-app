@@ -9,6 +9,10 @@ struct NoteAppApp: App {
         WindowGroup {
             ContentView()
                 .task {
+                    // UI 截图测试：播种演示数据（仅数据库为空时）
+                    if ProcessInfo.processInfo.arguments.contains("-seedDemoNote") {
+                        DemoSeeder.seedIfNeeded()
+                    }
                     // UI 截图测试用 launch argument 跳过系统通知弹窗，保证流程可重复
                     guard !ProcessInfo.processInfo.arguments.contains("UITestSkipPermissions") else { return }
                     // 先请求通知权限，再按开关安排每日回顾
