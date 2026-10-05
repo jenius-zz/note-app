@@ -196,7 +196,7 @@ struct ContentView: View {
                     .lineLimit(3)
                     .multilineTextAlignment(.leading)
                 HStack {
-                    Text(note.createdAt, format: .dateTime.month().day().hour().minute())
+                    Text(note.createdAt, format: .dateTime.month().day().hour().minute().locale(Locale(identifier: "zh_CN")))
                         .font(.journalCaption)
                         .foregroundStyle(Color.inkSoft)
                     Spacer()
