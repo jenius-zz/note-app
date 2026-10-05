@@ -90,6 +90,7 @@ struct ContentView: View {
                     } label: {
                         Label("记一笔", systemImage: "square.and.pencil")
                     }
+                    .accessibilityIdentifier("newNoteButton")
                 }
             }
         }

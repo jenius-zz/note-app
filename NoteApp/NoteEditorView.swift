@@ -39,6 +39,7 @@ struct NoteEditorView: View {
             Section {
                 TextEditor(text: $text)
                     .frame(minHeight: 160)
+                    .accessibilityIdentifier("noteTextEditor")
             } header: {
                 HStack {
                     Text(kind == .quote ? "原文" : "内容")
@@ -68,6 +69,7 @@ struct NoteEditorView: View {
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
                 Button("保存", action: save)
+                    .accessibilityIdentifier("saveNoteButton")
             }
         }
         .onChange(of: transcriber.transcript) { _, newValue in

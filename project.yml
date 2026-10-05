@@ -9,6 +9,9 @@ targets:
     platform: iOS
     sources:
       - path: NoteApp
+    scheme:
+      testTargets:
+        - NoteAppUITests
     entitlements:
       path: NoteApp/NoteApp.entitlements
     dependencies:
@@ -57,3 +60,19 @@ targets:
         CFBundleVersion: "1"
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
+
+  NoteAppUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - path: NoteAppUITests
+    dependencies:
+      - target: NoteApp
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.localnote.NoteAppUITests
+        PRODUCT_NAME: NoteAppUITests
+        SWIFT_VERSION: "5.0"
+        GENERATE_INFOPLIST_FILE: YES
+        CODE_SIGN_IDENTITY: "-"
+        CODE_SIGNING_REQUIRED: "NO"

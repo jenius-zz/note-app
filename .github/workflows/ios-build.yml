@@ -33,3 +33,20 @@ jobs:
           -destination 'platform=iOS Simulator,name=iPhone 16,OS=latest'
           -derivedDataPath build/derived
           build
+
+      - name: Run UI tests and capture screenshots
+        run: >
+          xcodebuild test
+          -project NoteApp.xcodeproj
+          -scheme NoteApp
+          -destination 'platform=iOS Simulator,name=iPhone 16,OS=latest'
+          -derivedDataPath build/derived
+          -only-testing:NoteAppUITests
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-screenshots
+          path: /tmp/shots/
+          if-no-files-found: warn
