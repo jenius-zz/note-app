@@ -48,7 +48,8 @@ targets:
       path: NoteAppWidget/NoteAppWidget.entitlements
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.localnote.NoteAppWidget
+        # App Extension 的 bundle ID 必须是主 App bundle ID 的前缀，否则装不到模拟器/真机
+        PRODUCT_BUNDLE_IDENTIFIER: com.localnote.NoteApp.NoteAppWidget
         SWIFT_VERSION: "5.0"
         MARKETING_VERSION: "0.1.0"
         CURRENT_PROJECT_VERSION: "1"
