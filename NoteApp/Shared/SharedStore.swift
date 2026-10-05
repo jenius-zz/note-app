@@ -8,10 +8,18 @@ enum SharedStore {
 
     static var sharedModelContainer: ModelContainer = {
         let schema = Schema([Note.self, Book.self])
-        let configuration = ModelConfiguration(
-            schema: schema,
-            groupContainer: .identifier(appGroupID)
-        )
+        let configuration: ModelConfiguration
+        if ProcessInfo.processInfo.arguments.contains("UITestSkipPermissions") {
+            // UI 截图测试：用 App 私有容器，不依赖 App Group 系统服务。
+            // 小组件的数据共享在截图测试中不需要，且 App Group 容器在 CI
+            // 模拟器上曾导致启动阶段主线程阻塞，UI 迟迟不渲染。
+            configuration = ModelConfiguration(schema: schema)
+        } else {
+            configuration = ModelConfiguration(
+                schema: schema,
+                groupContainer: .identifier(appGroupID)
+            )
+        }
         do {
             return try ModelContainer(for: schema, configurations: [configuration])
         } catch {
