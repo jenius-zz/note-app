@@ -24,6 +24,8 @@ final class NoteAppUITests: XCTestCase {
             emptyApp.wait(for: .runningForeground, timeout: 30),
             "App 未进入前台"
         )
+        // 诊断截图：看清进入前台瞬间到底显示了什么
+        shot(emptyApp, name: "shot0-foreground-state")
         waitFor(emptyApp.buttons["newNoteButton"], timeout: 30, message: "主界面未出现")
         shot(emptyApp, name: "shot_empty")
         emptyApp.terminate()
