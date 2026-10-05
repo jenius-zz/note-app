@@ -8,6 +8,11 @@ struct NoteAppApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .task {
+                    // 先请求通知权限，再按开关安排每日回顾
+                    _ = await RecapScheduler.requestAuthorization()
+                    RecapScheduler.scheduleDailyRecap()
+                }
         }
         .modelContainer(SharedStore.sharedModelContainer)
     }

@@ -71,8 +71,15 @@ struct ContentView: View {
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
-                        Button("导出全部为 Markdown") { exportAll(asMarkdown: true) }
-                        Button("导出全部为 TXT") { exportAll(asMarkdown: false) }
+                        Section {
+                            Toggle("每日回顾", isOn: dailyRecapBinding)
+                        } footer: {
+                            Text("每天早上 8:00 推送一条历史笔记")
+                        }
+                        Section("导出") {
+                            Button("导出全部为 Markdown") { exportAll(asMarkdown: true) }
+                            Button("导出全部为 TXT") { exportAll(asMarkdown: false) }
+                        }
                     } label: {
                         Image(systemName: "square.and.arrow.up")
                     }
@@ -109,6 +116,24 @@ struct ContentView: View {
 
     @State private var exportDocument: TextFileDocument = TextFileDocument(text: "")
     @State private var exportFilename: String = "本地笔记.md"
+
+    /// 每日回顾开关：值存在 UserDefaults，变化时安排 / 取消通知
+    private var dailyRecapBinding: Binding<Bool> {
+        Binding(
+            get: { RecapScheduler.isEnabled },
+            set: { enabled in
+                RecapScheduler.isEnabled = enabled
+                if enabled {
+                    Task {
+                        _ = await RecapScheduler.requestAuthorization()
+                        RecapScheduler.scheduleDailyRecap()
+                    }
+                } else {
+                    RecapScheduler.cancelDailyRecap()
+                }
+            }
+        )
+    }
 
     private func deleteNotes(offsets: IndexSet) {
         withAnimation {

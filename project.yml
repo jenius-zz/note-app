@@ -40,6 +40,7 @@ targets:
       - path: NoteAppWidget
       - path: NoteApp/Models.swift
       - path: NoteApp/Shared
+      - path: NoteApp/Recap
     entitlements:
       path: NoteAppWidget/NoteAppWidget.entitlements
     settings:

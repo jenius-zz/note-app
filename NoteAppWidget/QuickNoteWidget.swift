@@ -5,22 +5,32 @@ import SwiftData
 /// 锁屏 / 桌面速记小组件：
 /// - 显示今日已记条数（从共享 SwiftData 只读）
 /// - 「记一笔」按钮经 URL Scheme 打开 App 直达新建灵感页
+/// - 中尺寸显示「今日回顾」（App 每天选好后写入 App Group）
 struct QuickNoteEntry: TimelineEntry {
     let date: Date
     let todayCount: Int
+    let recapPreview: String?
 }
 
 struct QuickNoteProvider: TimelineProvider {
     func placeholder(in context: Context) -> QuickNoteEntry {
-        QuickNoteEntry(date: Date(), todayCount: 3)
+        QuickNoteEntry(date: Date(), todayCount: 3, recapPreview: "示例回顾第一行\n示例回顾第二行")
     }
 
     func getSnapshot(in context: Context, completion: @escaping (QuickNoteEntry) -> Void) {
-        completion(QuickNoteEntry(date: Date(), todayCount: todayNoteCount()))
+        completion(QuickNoteEntry(
+            date: Date(),
+            todayCount: todayNoteCount(),
+            recapPreview: RecapScheduler.todayRecapPreview()
+        ))
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<QuickNoteEntry>) -> Void) {
-        let entry = QuickNoteEntry(date: Date(), todayCount: todayNoteCount())
+        let entry = QuickNoteEntry(
+            date: Date(),
+            todayCount: todayNoteCount(),
+            recapPreview: RecapScheduler.todayRecapPreview()
+        )
         let nextRefresh = Calendar.current.date(byAdding: .minute, value: 15, to: Date()) ?? Date()
         completion(Timeline(entries: [entry], policy: .after(nextRefresh)))
     }
@@ -38,6 +48,7 @@ struct QuickNoteProvider: TimelineProvider {
 
 struct QuickNoteWidgetEntryView: View {
     var entry: QuickNoteProvider.Entry
+    @Environment(\.widgetFamily) private var family
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
@@ -47,6 +58,22 @@ struct QuickNoteWidgetEntryView: View {
             Text("今日已记 \(entry.todayCount) 条")
                 .font(.headline)
                 .minimumScaleFactor(0.8)
+            if family == .systemMedium {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("今日回顾")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    if let recap = entry.recapPreview {
+                        Text(recap)
+                            .font(.footnote)
+                            .lineLimit(2)
+                    } else {
+                        Text("今天还没有回顾，去记一笔吧")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            }
             Spacer()
             Link(destination: URL(string: "noteapp://new?kind=inspiration")!) {
                 Label("记一笔", systemImage: "square.and.pencil")
@@ -71,7 +98,7 @@ struct QuickNoteWidget: Widget {
             QuickNoteWidgetEntryView(entry: entry)
         }
         .configurationDisplayName("速记")
-        .description("一键新建灵感，并查看今日已记条数。")
+        .description("一键新建灵感，查看今日已记条数与今日回顾。")
         .supportedFamilies([.systemSmall, .systemMedium])
     }
 }
