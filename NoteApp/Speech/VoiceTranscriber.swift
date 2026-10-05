@@ -29,7 +29,7 @@ final class VoiceTranscriber: ObservableObject {
             return "当前系统不支持中文语音识别"
         }
         guard recognizer.supportsOnDeviceRecognition else {
-            return "此设备不支持本地中文语音识别，请先到"设置 > 通用 > 听写语言"下载中文离线听写"
+            return "此设备不支持本地中文语音识别，请先到「设置 > 通用 > 听写语言」下载中文离线听写"
         }
         let speechStatus = await withCheckedContinuation { continuation in
             SFSpeechRecognizer.requestAuthorization { status in
@@ -37,11 +37,11 @@ final class VoiceTranscriber: ObservableObject {
             }
         }
         guard speechStatus == .authorized else {
-            return "没有语音识别权限，请到"设置 > 本地笔记"中打开"语音识别""
+            return "没有语音识别权限，请到「设置 > 本地笔记」中打开「语音识别」"
         }
         let micGranted = await AVAudioApplication.requestRecordPermission()
         guard micGranted else {
-            return "没有麦克风权限，请到"设置 > 本地笔记"中打开"麦克风""
+            return "没有麦克风权限，请到「设置 > 本地笔记」中打开「麦克风」"
         }
         return nil
     }
