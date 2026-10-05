@@ -13,6 +13,11 @@ struct NoteEditorView: View {
     @State private var text: String
     @State private var annotation: String
     @State private var selectedBook: Book?
+    @StateObject private var transcriber = VoiceTranscriber()
+    /// 开始录音时正文的快照，转写文字追加在其后
+    @State private var recordingBase: String = ""
+    @State private var showSpeechError: Bool = false
+    @State private var pulse: Bool = false
 
     init(note: Note?, initialKind: NoteKind = .inspiration) {
         self.existingNote = note
@@ -31,9 +36,15 @@ struct NoteEditorView: View {
             }
             .pickerStyle(.segmented)
 
-            Section(kind == .quote ? "原文" : "内容") {
+            Section {
                 TextEditor(text: $text)
                     .frame(minHeight: 160)
+            } header: {
+                HStack {
+                    Text(kind == .quote ? "原文" : "内容")
+                    Spacer()
+                    micButton
+                }
             }
 
             if kind == .quote {
@@ -58,6 +69,65 @@ struct NoteEditorView: View {
             ToolbarItem(placement: .confirmationAction) {
                 Button("保存", action: save)
             }
+        }
+        .onChange(of: transcriber.transcript) { _, newValue in
+            guard transcriber.isRecording else { return }
+            text = recordingBase + newValue
+        }
+        .onChange(of: transcriber.isRecording) { _, recording in
+            if recording {
+                withAnimation(.easeInOut(duration: 0.7).repeatForever(autoreverses: true)) {
+                    pulse = true
+                }
+            } else {
+                pulse = false
+            }
+        }
+        .alert("语音转写", isPresented: $showSpeechError) {
+            Button("好", role: .cancel) {}
+        } message: {
+            Text(transcriber.errorMessage ?? "")
+        }
+        .onDisappear {
+            transcriber.stop()
+        }
+    }
+
+    /// 麦克风按钮：点按开始/停止端侧语音转写，识别文字实时追加到正文。
+    private var micButton: some View {
+        Button {
+            Task { await toggleRecording() }
+        } label: {
+            HStack(spacing: 4) {
+                if transcriber.isRecording {
+                    Circle()
+                        .fill(.red)
+                        .frame(width: 8, height: 8)
+                        .opacity(pulse ? 0.25 : 1.0)
+                    Text("正在听…")
+                } else {
+                    Image(systemName: "mic")
+                }
+            }
+            .font(.caption)
+            .foregroundStyle(transcriber.isRecording ? .red : .blue)
+        }
+    }
+
+    private func toggleRecording() async {
+        if transcriber.isRecording {
+            transcriber.stop()
+            return
+        }
+        recordingBase = text.isEmpty ? "" : text + "\n"
+        if let message = await transcriber.ensurePermissions() {
+            transcriber.errorMessage = message
+            showSpeechError = true
+            return
+        }
+        transcriber.start()
+        if transcriber.errorMessage != nil {
+            showSpeechError = true
         }
     }
 

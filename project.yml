@@ -31,6 +31,8 @@ targets:
           - CFBundleURLName: com.localnote.NoteApp.urlscheme
             CFBundleURLSchemes:
               - noteapp
+        NSSpeechRecognitionUsageDescription: "用于将你的语音转为文字，只在本地识别，不上传录音"
+        NSMicrophoneUsageDescription: "用于语音速记，把说话转为文字"
   NoteAppWidget:
     type: app-extension
     platform: iOS

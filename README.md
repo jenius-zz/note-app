@@ -14,6 +14,9 @@ SwiftUI + SwiftData，iOS 17+，本地优先。
 | `NoteApp/Shared/SharedStore.swift` | App Group 共享 SwiftData 容器（App 与小组件共用） |
 | `NoteAppWidget/` | WidgetKit 速记小组件：今日条数 + 一键新建（noteapp:// URL Scheme） |
 | `NoteApp/NoteApp.entitlements` / `NoteAppWidget/NoteAppWidget.entitlements` | App Group `group.com.localnote.NoteApp` |
+| `NoteApp/Intents/CaptureIntent.swift` | App Intent"记一条灵感"：快捷指令/锁屏按钮可调用，后台写入 SwiftData |
+| `NoteApp/Speech/VoiceTranscriber.swift` | 端侧语音转写：Speech zh-CN + requiresOnDeviceRecognition，录音不上传 |
+| `NoteApp/NoteEditorView.swift` | 新增麦克风按钮：点按开始/停止转写，红色脉冲"正在听…"状态，转写文字实时追加 |
 
 ## 在 Mac 上跑起来（约 5 分钟）
 
