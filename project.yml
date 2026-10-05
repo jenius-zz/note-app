@@ -9,6 +9,11 @@ targets:
     platform: iOS
     sources:
       - path: NoteApp
+    entitlements:
+      path: NoteApp/NoteApp.entitlements
+    dependencies:
+      # extension 作为 target 依赖，Xcode 自动生成 "Embed App Extensions" 阶段
+      - target: NoteAppWidget
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.localnote.NoteApp
@@ -22,3 +27,30 @@ targets:
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
         UIUserInterfaceStyle: Automatic
+        CFBundleURLTypes:
+          - CFBundleURLName: com.localnote.NoteApp.urlscheme
+            CFBundleURLSchemes:
+              - noteapp
+  NoteAppWidget:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: NoteAppWidget
+      - path: NoteApp/Models.swift
+      - path: NoteApp/Shared
+    entitlements:
+      path: NoteAppWidget/NoteAppWidget.entitlements
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.localnote.NoteAppWidget
+        SWIFT_VERSION: "5.0"
+        MARKETING_VERSION: "0.1.0"
+        CURRENT_PROJECT_VERSION: "1"
+    info:
+      path: NoteAppWidget/Info.plist
+      properties:
+        CFBundleDisplayName: 速记
+        CFBundleShortVersionString: "0.1.0"
+        CFBundleVersion: "1"
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension

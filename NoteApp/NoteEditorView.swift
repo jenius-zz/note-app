@@ -14,9 +14,9 @@ struct NoteEditorView: View {
     @State private var annotation: String
     @State private var selectedBook: Book?
 
-    init(note: Note?) {
+    init(note: Note?, initialKind: NoteKind = .inspiration) {
         self.existingNote = note
-        _kind = State(initialValue: note?.kind ?? .inspiration)
+        _kind = State(initialValue: note?.kind ?? initialKind)
         _text = State(initialValue: note?.text ?? "")
         _annotation = State(initialValue: note?.annotation ?? "")
         _selectedBook = State(initialValue: note?.book)

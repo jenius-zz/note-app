@@ -9,6 +9,8 @@ struct ContentView: View {
     @State private var searchText = ""
     @State private var kindFilter: NoteKind? = nil
     @State private var showingExporter = false
+    @State private var showQuickCapture = false
+    @State private var quickCaptureKind: NoteKind = .inspiration
 
     private var filteredNotes: [Note] {
         notes.filter { note in
@@ -90,6 +92,17 @@ struct ContentView: View {
             contentType: .plainText,
             defaultFilename: exportFilename
         ) { _ in }
+        // 小组件「记一笔」经 noteapp://new?kind=inspiration 跳转到新建页
+        .navigationDestination(isPresented: $showQuickCapture) {
+            NoteEditorView(note: nil, initialKind: quickCaptureKind)
+        }
+        .onOpenURL { url in
+            guard url.scheme == "noteapp", url.host == "new" else { return }
+            let kindParam = URLComponents(url: url, resolvingAgainstBaseURL: false)?
+                .queryItems?.first(where: { $0.name == "kind" })?.value
+            quickCaptureKind = (kindParam == "quote") ? .quote : .inspiration
+            showQuickCapture = true
+        }
     }
 
     // MARK: - 导出

@@ -11,6 +11,9 @@ SwiftUI + SwiftData，iOS 17+，本地优先。
 | `ContentView.swift` | 笔记列表、类型筛选、本地全文搜索、md/txt导出 |
 | `NoteEditorView.swift` | 新建/编辑：原文与批注分离、摘句归属书籍 |
 | `Exporter.swift` | 导出为 Markdown / TXT 的文件包装 |
+| `NoteApp/Shared/SharedStore.swift` | App Group 共享 SwiftData 容器（App 与小组件共用） |
+| `NoteAppWidget/` | WidgetKit 速记小组件：今日条数 + 一键新建（noteapp:// URL Scheme） |
+| `NoteApp/NoteApp.entitlements` / `NoteAppWidget/NoteAppWidget.entitlements` | App Group `group.com.localnote.NoteApp` |
 
 ## 在 Mac 上跑起来（约 5 分钟）
 
