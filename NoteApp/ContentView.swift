@@ -6,6 +6,14 @@ import UniformTypeIdentifiers
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \Note.createdAt, order: .reverse) private var notes: [Note]
+
+    /// 卡片时间统一中文格式（模拟器 locale 为英文时也不走样）
+    private static let cardDateFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.locale = Locale(identifier: "zh_CN")
+        f.dateFormat = "M月d日 HH:mm"
+        return f
+    }()
     @State private var searchText = ""
     @State private var kindFilter: NoteKind? = nil
     @State private var showingExporter = false
@@ -196,7 +204,7 @@ struct ContentView: View {
                     .lineLimit(3)
                     .multilineTextAlignment(.leading)
                 HStack {
-                    Text(note.createdAt, format: .dateTime.month().day().hour().minute().locale(Locale(identifier: "zh_CN")))
+                    Text(Self.cardDateFormatter.string(from: note.createdAt))
                         .font(.journalCaption)
                         .foregroundStyle(Color.inkSoft)
                     Spacer()
