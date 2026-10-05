@@ -3,7 +3,6 @@ package com.localnote.app
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.material3.MaterialTheme
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -14,13 +13,14 @@ import com.localnote.app.ui.EditorViewModel
 import com.localnote.app.ui.NoteEditorScreen
 import com.localnote.app.ui.NotesListScreen
 import com.localnote.app.ui.NotesViewModel
+import com.localnote.app.ui.theme.LocalNoteTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val repo = NoteRepository(AppDatabase.get(this))
         setContent {
-            MaterialTheme {
+            LocalNoteTheme {
                 val nav = rememberNavController()
                 NavHost(navController = nav, startDestination = "list") {
                     composable("list") {

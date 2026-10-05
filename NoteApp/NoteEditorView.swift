@@ -28,47 +28,77 @@ struct NoteEditorView: View {
     }
 
     var body: some View {
-        Form {
-            Picker("类型", selection: $kind) {
-                ForEach(NoteKind.allCases) { k in
-                    Text(k.title).tag(k)
-                }
-            }
-            .pickerStyle(.segmented)
+        ScrollView {
+            VStack(alignment: .leading, spacing: 14) {
+                kindSelector
 
-            Section {
-                TextEditor(text: $text)
-                    .frame(minHeight: 160)
-                    .accessibilityIdentifier("noteTextEditor")
-            } header: {
-                HStack {
-                    Text(kind == .quote ? "原文" : "内容")
-                    Spacer()
-                    micButton
-                }
-            }
-
-            if kind == .quote {
-                Section("批注") {
-                    TextEditor(text: $annotation)
-                        .frame(minHeight: 80)
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Text(kind == .quote ? "原文" : "内容")
+                            .font(.journalHeadline)
+                            .foregroundStyle(Color.inkBrown)
+                        Spacer()
+                        micButton
+                    }
+                    ZStack(alignment: .topLeading) {
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(Color.white)
+                        TextEditor(text: $text)
+                            .frame(minHeight: 160)
+                            .scrollContentBackground(.hidden)
+                            .padding(8)
+                            .accessibilityIdentifier("noteTextEditor")
+                    }
                 }
 
-                Section("归属书籍") {
-                    Picker("书籍", selection: $selectedBook) {
-                        Text("不归属").tag(nil as Book?)
-                        ForEach(books) { book in
-                            Text(book.title).tag(book as Book?)
+                if kind == .quote {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("批注")
+                            .font(.journalHeadline)
+                            .foregroundStyle(Color.inkBrown)
+                        ZStack(alignment: .topLeading) {
+                            RoundedRectangle(cornerRadius: 16)
+                                .fill(Color.white)
+                            TextEditor(text: $annotation)
+                                .frame(minHeight: 80)
+                                .scrollContentBackground(.hidden)
+                                .padding(8)
                         }
+                    }
+
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("归属书籍")
+                            .font(.journalHeadline)
+                            .foregroundStyle(Color.inkBrown)
+                        Picker("书籍", selection: $selectedBook) {
+                            Text("不归属").tag(nil as Book?)
+                            ForEach(books) { book in
+                                Text(book.title).tag(book as Book?)
+                            }
+                        }
+                        .pickerStyle(.menu)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(Color.white)
+                        .clipShape(RoundedRectangle(cornerRadius: 16))
                     }
                 }
             }
+            .padding(16)
         }
+        .background(Color.creamBackground.ignoresSafeArea())
         .navigationTitle(existingNote == nil ? "记一笔" : "编辑")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
                 Button("保存", action: save)
+                    .font(.journalHeadline)
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
+                    .background(Color.accentOrange)
+                    .clipShape(Capsule())
                     .accessibilityIdentifier("saveNoteButton")
             }
         }
@@ -95,6 +125,23 @@ struct NoteEditorView: View {
         }
     }
 
+    /// 类型切换：胶囊式两段按钮，按类型着色
+    private var kindSelector: some View {
+        HStack(spacing: 10) {
+            ForEach(NoteKind.allCases) { k in
+                Button { kind = k } label: {
+                    Text(k.title)
+                        .font(.journalHeadline)
+                        .foregroundStyle(kind == k ? .white : Color.inkBrown)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 10)
+                        .background(kind == k ? Color.tagColor(for: k) : Color.white.opacity(0.7))
+                        .clipShape(RoundedRectangle(cornerRadius: 14))
+                }
+            }
+        }
+    }
+
     /// 麦克风按钮：点按开始/停止端侧语音转写，识别文字实时追加到正文。
     private var micButton: some View {
         Button {
@@ -112,7 +159,7 @@ struct NoteEditorView: View {
                 }
             }
             .font(.caption)
-            .foregroundStyle(transcriber.isRecording ? .red : .blue)
+            .foregroundStyle(transcriber.isRecording ? .red : Color.accentOrange)
         }
     }
 

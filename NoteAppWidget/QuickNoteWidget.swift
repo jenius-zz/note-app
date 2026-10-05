@@ -52,41 +52,50 @@ struct QuickNoteWidgetEntryView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("本地笔记")
-                .font(.caption)
-                .foregroundStyle(.secondary)
+            HStack {
+                Text("本地笔记")
+                    .font(.system(.caption, design: .rounded))
+                    .foregroundStyle(Color.inkSoft)
+                Spacer()
+                Text("✦")
+                    .font(.caption2)
+                    .foregroundStyle(Color.tagOrange.opacity(0.6))
+            }
             Text("今日已记 \(entry.todayCount) 条")
-                .font(.headline)
+                .font(.system(.headline, design: .rounded).weight(.semibold))
+                .foregroundStyle(Color.inkBrown)
                 .minimumScaleFactor(0.8)
             if family == .systemMedium {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("今日回顾")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .font(.system(.caption, design: .rounded))
+                        .foregroundStyle(Color.inkSoft)
                     if let recap = entry.recapPreview {
                         Text(recap)
-                            .font(.footnote)
+                            .font(.system(.footnote, design: .rounded))
+                            .foregroundStyle(Color.inkBrown)
                             .lineLimit(2)
                     } else {
                         Text("今天还没有回顾，去记一笔吧")
-                            .font(.footnote)
-                            .foregroundStyle(.secondary)
+                            .font(.system(.footnote, design: .rounded))
+                            .foregroundStyle(Color.inkSoft)
                     }
                 }
             }
             Spacer()
             Link(destination: URL(string: "noteapp://new?kind=inspiration")!) {
                 Label("记一笔", systemImage: "square.and.pencil")
-                    .font(.subheadline)
+                    .font(.system(.subheadline, design: .rounded))
                     .fontWeight(.semibold)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 8)
-                    .background(Color.accentColor)
+                    .background(Color.accentOrange)
                     .foregroundStyle(.white)
                     .clipShape(Capsule())
             }
         }
         .padding()
+        .containerBackground(Color.creamBackground, for: .widget)
     }
 }
 
